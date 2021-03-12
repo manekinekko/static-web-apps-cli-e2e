@@ -1,0 +1,32 @@
+{
+  "name": "static-web-apps-cli-e2e",
+  "version": "1.0.0",
+  "description": "This repository contains apps that can be used with as a starting point for some MS Learn Modules. because everyone has their own preference for their JavaScript frameworks/library, you can choose which one you prefer.",
+  "main": "index.js",
+  "scripts": {
+    "angular": "NODE_ENV=test SWA_CLI_APP_ARTIFACT='./angular-app/dist/angular-app/' jest --verbose --detectOpenHandles --config=jest.e2e.config.js --watch",
+    "svelte": "NODE_ENV=test SWA_CLI_APP_ARTIFACT='./react-app/build/' jest --verbose --detectOpenHandles --config=jest.e2e.config.js",
+    "react": "NODE_ENV=test SWA_CLI_APP_ARTIFACT='./svelte-app/public/' jest --verbose --detectOpenHandles --config=jest.e2e.config.js",
+    "vue": "NODE_ENV=test SWA_CLI_APP_ARTIFACT='./vue-app/dist/' jest --verbose --detectOpenHandles --config=jest.e2e.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manekinekko/static-web-apps-cli-e2e.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/manekinekko/static-web-apps-cli-e2e/issues"
+  },
+  "homepage": "https://github.com/manekinekko/static-web-apps-cli-e2e#readme",
+  "devDependencies": {
+    "eslint-plugin-jest-playwright": "^0.2.1",
+    "jest": "^26.6.3",
+    "jest-html-reporters": "^2.1.2",
+    "jest-playwright-preset": "^1.5.1",
+    "playwright": "^1.9.2",
+    "playwright-cli": "^0.180.0",
+    "playwright-core": "^1.9.2"
+  }
+}
