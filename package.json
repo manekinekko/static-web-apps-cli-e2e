@@ -1,0 +1,36 @@
+{
+  "name": "static-web-apps-cli-e2e",
+  "version": "1.0.0",
+  "description": "This repository contains apps that can be used with as a starting point for some MS Learn Modules. because everyone has their own preference for their JavaScript frameworks/library, you can choose which one you prefer.",
+  "main": "index.js",
+  "dependencies": {
+    "@azure/static-web-apps-cli": "git+https://github.com/Azure/static-web-apps-cli.git#main"
+  },
+  "devDependencies": {
+    "cypress": "^6.6.0",
+    "start-server-and-test": "^1.12.0"
+  },
+  "scripts": {
+    "swa": "swa start --api=./api --port 1234",
+    "angular": "npm run swa -- ./angular-app/dist/angular-app",
+    "react": "  npm run swa -- ./react-app/build",
+    "svelte": " npm run swa -- ./svelte-app/public",
+    "vue": "    npm run swa -- ./vue-app/dist",
+    "cy:run": "cypress run",
+    "test:angular": "start-server-and-test angular http://0.0.0.0:1234 cy:run",
+    "test:react": "  start-server-and-test react   http://0.0.0.0:1234 cy:run",
+    "test:svelte": " start-server-and-test svelte  http://0.0.0.0:1234 cy:run",
+    "test:vue": "    start-server-and-test vue     http://0.0.0.0:1234 cy:run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manekinekko/static-web-apps-cli-e2e.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manekinekko/static-web-apps-cli-e2e/issues"
+  },
+  "homepage": "https://github.com/manekinekko/static-web-apps-cli-e2e#readme"
+}
