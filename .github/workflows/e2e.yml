@@ -73,6 +73,7 @@ jobs:
         key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
         restore-keys: |
           cypress-${{ runner.os }}-cypress-${{ github.ref }}-
+    
     - name: Cache local node_modules
       uses: actions/cache@v1
       with:
@@ -80,6 +81,15 @@ jobs:
         key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-modules-
+
+    - name: Cache ${{matrix.app}} node_modules
+      uses: actions/cache@v1
+      with:
+        path: ${{matrix.app}}-app/node_modules
+        key: ${{matrix.app}}-${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{matrix.app}}-${{ runner.os }}-node-modules-
+
     # check the restored Cypress binary
     - name: Check binary
       run: |
@@ -118,6 +128,7 @@ jobs:
         key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
         restore-keys: |
           cypress-${{ runner.os }}-cypress-${{ github.ref }}-
+    
     - name: Cache local node_modules
       uses: actions/cache@v1
       with:
@@ -125,6 +136,15 @@ jobs:
         key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-modules-
+
+    - name: Cache ${{matrix.app}} node_modules
+      uses: actions/cache@v1
+      with:
+        path: ${{matrix.app}}-app/node_modules
+        key: ${{matrix.app}}-${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{matrix.app}}-${{ runner.os }}-node-modules-
+
     # check the restored Cypress binary
     - name: Check binary
       run: |
