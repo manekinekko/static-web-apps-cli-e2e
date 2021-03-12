@@ -18,6 +18,7 @@ module.exports = {
         trailingComma: 'all',
         singleQuote: true,
         printWidth: 80,
+        endOfLine: 'auto',
       },
     ],
     'vue/no-unused-components': [
