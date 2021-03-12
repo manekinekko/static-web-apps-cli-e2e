@@ -1,38 +1,138 @@
 name: E2E CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: push
 
 jobs:
-  build:
-
+  Install:
     strategy:
       matrix:
         node-version: [14.x, 15.x]
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        app: ['angular-app', 'react-app', 'vue-app', 'svelte-app']
+        app: ['angular', 'react', 'vue', 'svelte']
 
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Install monore dependencies
+    
+    - name: Cache central NPM modules
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Cache Cypress binary
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/Cypress
+        key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+      
+    # Cache local node_modules to pass to testing jobs
+    - name: Cache local node_modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-${{ github.ref }}-
+
+    - name: Install root dependencies
+      env:
+        CI: 1    
       run: npm ci
-    - name: Build ${{matrix.app}}
+      
+  Build:
+    needs: Install
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        app: ['angular', 'react', 'vue', 'svelte']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    # Restore just local node_modules and the Cypress binary archives.
+    - name: Cache Cypress binary
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/Cypress
+        key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          cypress-${{ runner.os }}-cypress-${{ github.ref }}-
+    - name: Cache local node_modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-
+    # check the restored Cypress binary
+    - name: Check binary
       run: |
-        cd ${{matrix.app}} 
+        npx cypress cache path
+        npx cypress cache list
+
+    - name: Build ${{matrix.app}}
+      env:
+        CI: 1
+      run: |
+        cd ${{matrix.app}}-app
         npm ci
         npm run build -- --prod
-    - name: Run E2E compaign
+        
+  E2E:
+    needs: Build
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        app: ['angular', 'react', 'vue', 'svelte']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    # Restore just local node_modules and the Cypress binary archives.
+    - name: Cache Cypress binary
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/Cypress
+        key: cypress-${{ runner.os }}-cypress-${{ github.ref }}-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          cypress-${{ runner.os }}-cypress-${{ github.ref }}-
+    - name: Cache local node_modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-
+    # check the restored Cypress binary
+    - name: Check binary
       run: |
-        npm run test:angular
-        npm run test:vue
-        npm run test:react
-        npm run test:svelte
+        npx cypress cache path
+        npx cypress cache list
+
+    - name: e2e ${{matrix.app}}
+      env:
+        CI: 1
+      run: |
+        npm run test:${{matrix.app}}
