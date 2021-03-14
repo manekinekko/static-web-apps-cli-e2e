@@ -82,10 +82,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-modules-
 
-    - name: Cache ${{matrix.app}} node_modules
+    - name: Cache ${{matrix.app}} node_modules and builds
       uses: actions/cache@v1
       with:
-        path: ${{matrix.app}}-app/node_modules
+        path: ${{matrix.app}}-app/{node_modules,build,dist,public}
         key: ${{matrix.app}}-${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{matrix.app}}-${{ runner.os }}-node-modules-
@@ -137,10 +137,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-modules-
 
-    - name: Cache ${{matrix.app}} node_modules
+    - name: Cache ${{matrix.app}} node_modules and builds
       uses: actions/cache@v1
       with:
-        path: ${{matrix.app}}-app/node_modules
+        path: ${{matrix.app}}-app/{node_modules,build,dist,public}
         key: ${{matrix.app}}-${{ runner.os }}-node-modules-${{ github.ref }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{matrix.app}}-${{ runner.os }}-node-modules-
