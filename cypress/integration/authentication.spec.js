@@ -42,12 +42,11 @@ context("/.auth/me", () => {
       cy.request("/.auth/me").should((response) => {
         console.log({ response });
         expect(response.status).to.eq(200);
-        expect(response.body.clientPrincipal.userRoles).to.deep.eq(["foo", "authenticated"]);
+        expect(response.body.clientPrincipal.userRoles).to.deep.eq(["foo", "anonymous", "authenticated"]);
       });
     });
   });
 });
-
 
 context("/.auth/login/github", () => {
   let clientPrincipal;
@@ -59,27 +58,25 @@ context("/.auth/login/github", () => {
       identityProvider: "facebook",
       userId: "d75b260a64504067bfc5b2905e3b8182",
       userDetails: "user@example.com",
-      userRoles: ["authenticated"],
+      userRoles: ["anonymous", "authenticated"],
     };
 
     cy.clearCookie("StaticWebAppsAuthCookie");
-
   });
 
   describe("when using GitHub provider", () => {
     it("provider should be 'github'", () => {
-      cy.get('#identityProvider').should('be.disabled');
-      cy.get('#identityProvider').should('have.value', 'github');
+      cy.get("#identityProvider").should("be.disabled");
+      cy.get("#identityProvider").should("have.value", "github");
     });
     it("username should be empty", () => {
-      cy.get('#userDetails').should('be.empty');
+      cy.get("#userDetails").should("be.empty");
     });
     it("userId should be empty", () => {
-      cy.get('#userId').should('be.empty');
+      cy.get("#userId").should("be.empty");
     });
-    it("userRoles should contains authenticated role", () => {
-      cy.get('#userRoles').should('have.value', 'authenticated');
+    it("userRoles should contains authenticated and anonymous roles", () => {
+      cy.get("#userRoles").should("have.value", "anonymous\nauthenticated");
     });
   });
-
 });
